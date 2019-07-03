@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fbb194637f858642911ef2d64bc94db, type: 3}
-  m_Name: New Composite Behavior
+  m_Script: {fileID: 11500000, guid: df9b9c1e6a888aa4bb82653003282360, type: 3}
+  m_Name: Obstacle Layer Filter
   m_EditorClassIdentifier: 
-  behaviours: []
-  weights: []
+  mask:
+    serializedVersion: 2
+    m_Bits: 256

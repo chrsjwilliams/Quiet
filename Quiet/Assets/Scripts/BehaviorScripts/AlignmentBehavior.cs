@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Flock/Behavior/Alignment")]
-public class AlignmentBehavior : FlockBehaviour
+public class AlignmentBehavior : FilterFlockBehavior
 {
     public override Vector2 CalculateMove(FlockAgent agent, List<Transform> context, Flock flock)
     {
@@ -12,7 +12,8 @@ public class AlignmentBehavior : FlockBehaviour
 
         // Average all points
         Vector2 alignmentMove = Vector2.zero;
-        foreach (Transform item in context)
+        List<Transform> filterContext = (filter == null) ? context : filter.Filter(agent, context);
+        foreach (Transform item in filterContext)
         {
             alignmentMove += (Vector2)item.transform.up;
         }

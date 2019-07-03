@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Flock/Behavior/Cohesion")]
-public class CohesionBehavior : FlockBehaviour
+public class CohesionBehavior : FilterFlockBehavior
 {
     public override Vector2 CalculateMove(FlockAgent agent, List<Transform> context, Flock flock)
     {
@@ -12,7 +12,8 @@ public class CohesionBehavior : FlockBehaviour
 
         // Average all points
         Vector2 cohesionMove = Vector2.zero;
-        foreach(Transform item in context)
+        List<Transform> filterContext = (filter == null) ? context : filter.Filter(agent, context);
+        foreach (Transform item in filterContext)
         {
             cohesionMove += (Vector2)item.position;
         }
