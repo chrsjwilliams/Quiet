@@ -67,24 +67,10 @@ public class Main : MonoBehaviour
     {
         Assert.raiseExceptions = true;
 
-        InitalizeServices();
+ 
 
         if(!DEBUG_MODE)
             Services.Scenes.PushScene<TitleSceneScript>();
     }
 
-    private void InitalizeServices()
-    {
-        Services.Main = this;
-        
-        Services.EventManager = new GameEventsManager();
-        Services.GeneralTaskManager = new TaskManager();
-        Services.Prefabs = Resources.Load<PrefabDB>("Prefabs/PrefabDB");
-        Services.InputManager = new InputManager();
-        Services.GameManager = GetComponent<GameManager>();
-        Services.GameManager.Init();
-        Services.AudioManager = GetComponent<AudioManager>();
-        Services.Scenes = new GameSceneManager<TransitionData>(gameObject, Services.Prefabs.Scenes);
-        
-    }
 }

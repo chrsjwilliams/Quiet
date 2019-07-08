@@ -12,9 +12,14 @@ public class TitleSceneScript : Scene<TransitionData>
     private Text title;
     private Text click;
 
+    private void Start()
+    {
+       
+    }
 
     internal override void OnEnter(TransitionData data)
     {
+       
         title = GameObject.Find("TITLE").GetComponent<Text>();
 
         /*
@@ -64,7 +69,7 @@ public class TitleSceneScript : Scene<TransitionData>
         _tm.Update();
         if (Input.GetKeyDown(startGame) || Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
-            Services.AudioManager.PlayClip(Clips.CLICK);
+            //Services.AudioManager.PlayClip(Clips.CLICK);
             StartGame();
         }
     }

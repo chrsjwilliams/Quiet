@@ -26,17 +26,17 @@ public class InputManager
             switch (touch.phase)
             {
 			case TouchPhase.Began:
-				Services.EventManager.Fire (new TouchDown (touch));
+				Services.GameEventManager.Fire (new TouchDown (touch));
 				break;
 			case TouchPhase.Moved:
-				Services.EventManager.Fire (new TouchMove (touch));
+				Services.GameEventManager.Fire (new TouchMove (touch));
 				break;
 			case TouchPhase.Stationary:
 				break;
 			case TouchPhase.Ended:
 				Touch touchLastFrame = GetLastFrameTouch (touch.fingerId);
 				if (touchLastFrame.phase != TouchPhase.Ended) {
-					Services.EventManager.Fire (new TouchUp (touch));
+					Services.GameEventManager.Fire (new TouchUp (touch));
                     }
                     break;
 			case TouchPhase.Canceled:
@@ -46,19 +46,19 @@ public class InputManager
             }
         }
         if (Input.GetMouseButtonDown(0)) {
-            Services.EventManager.Fire(new MouseDown(Input.mousePosition));
+            Services.GameEventManager.Fire(new MouseDown(Input.mousePosition));
             lastMousePos = Input.mousePosition;
         }
 
         if (Input.GetMouseButton(0) && Input.mousePosition != lastMousePos)
         {
-            Services.EventManager.Fire(new MouseMove(Input.mousePosition));
+            Services.GameEventManager.Fire(new MouseMove(Input.mousePosition));
             lastMousePos = Input.mousePosition;
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            Services.EventManager.Fire(new MouseUp(Input.mousePosition));
+            Services.GameEventManager.Fire(new MouseUp(Input.mousePosition));
         }
         //if (Services.UIManager != null)
         //	Services.UIManager.UpdateTouchCount (Input.touches);
@@ -81,7 +81,7 @@ public class InputManager
     {
         if (Input.anyKey)
         {
-            Services.EventManager.Fire(new KeyPressedEvent(FetchKey()));
+            Services.GameEventManager.Fire(new KeyPressedEvent(FetchKey()));
         }
 
         GetInput();

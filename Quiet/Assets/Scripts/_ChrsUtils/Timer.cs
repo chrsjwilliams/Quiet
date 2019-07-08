@@ -38,8 +38,8 @@ public class Timer : MonoBehaviour
         stopTimer = false;
         tenSecondsLeft = false;
 		currentTime = GetComponent<Text>();
-        Services.EventManager.Register<StartTimerEvent>(OnStartTimerEvent);
-        Services.EventManager.Register<StopTimerEvent>(OnStopTimerEvent);
+        Services.GameEventManager.Register<StartTimerEvent>(OnStartTimerEvent);
+        Services.GameEventManager.Register<StopTimerEvent>(OnStopTimerEvent);
 	}
 
 	/*--------------------------------------------------------------------------------------*/
@@ -68,7 +68,7 @@ public class Timer : MonoBehaviour
 	/*--------------------------------------------------------------------------------------*/
     void OnDestroy()
     {
-        Services.EventManager.Unregister<StartTimerEvent>(OnStartTimerEvent);
+        Services.GameEventManager.Unregister<StartTimerEvent>(OnStartTimerEvent);
         StopAllCoroutines();
     }
 
@@ -103,17 +103,17 @@ public class Timer : MonoBehaviour
             if(duration < 10 && !tenSecondsLeft)
             {
                 tenSecondsLeft = true;
-                Services.EventManager.Fire(new TenSecondsLeftEvent(tenSecondsLeft));
+                Services.GameEventManager.Fire(new TenSecondsLeftEvent(tenSecondsLeft));
             }
             if(duration > 10)
             {
                 tenSecondsLeft = false;
-                Services.EventManager.Fire(new TenSecondsLeftEvent(tenSecondsLeft));
+                Services.GameEventManager.Fire(new TenSecondsLeftEvent(tenSecondsLeft));
             }
 			currentTime.text = FloatToTime(duration, "#00:00");
 		}
 
-        Services.EventManager.Fire(new TimeIsOverEvent(this));
+        Services.GameEventManager.Fire(new TimeIsOverEvent(this));
         stopTimer = true;
 		yield return new WaitForEndOfFrame();
 	}
@@ -127,7 +127,7 @@ public class Timer : MonoBehaviour
             currentTime.text = FloatToTime(duration, "#00:00");
         }
 
-        Services.EventManager.Fire(new TimeIsOverEvent(this));
+        Services.GameEventManager.Fire(new TimeIsOverEvent(this));
         stopTimer = true;
         yield return new WaitForEndOfFrame();
     }

@@ -32,7 +32,7 @@ public class GameSceneScript : Scene<TransitionData>
 
     public void SwapScene()
     {
-        Services.AudioManager.SetVolume(1.0f);
+        //Services.AudioManager.SetVolume(1.0f);
         Services.Scenes.Swap<TitleSceneScript>();
     }
 
@@ -46,7 +46,7 @@ public class GameSceneScript : Scene<TransitionData>
 
     private void EndGame()
     {
-        Services.AudioManager.FadeAudio();
+        //Services.AudioManager.FadeAudio();
 
     }
 

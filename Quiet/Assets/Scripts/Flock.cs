@@ -6,8 +6,11 @@ public class Flock : MonoBehaviour
 {
     /*
      *  TODO:
-     *          Color chnage based on number of neighbors?
-     * 
+     *          Color change based on number of neighbors?
+     *          Random Walk behabior
+     *          Flee Behavior
+     *          Surround behavior
+     *          Zoom out when not interacting
      * 
      */ 
 
@@ -15,9 +18,9 @@ public class Flock : MonoBehaviour
     List<FlockAgent> agents = new List<FlockAgent>();
     public FlockBehaviour behavior;
 
-    [Range(10, 500)]
+    [Range(1, 500)]
     public int startingCount = 250;
-    const float AGENT_DENSITY = 0.08f;
+    public const float AGENT_DENSITY = 0.08f;
 
     [Range(1f, 100f)]
     public float driveFactor = 10f;
@@ -28,9 +31,9 @@ public class Flock : MonoBehaviour
     [Range(0f, 1f)]
     public float avoidanceRadiusMultiplier = 0.5f;
 
-    private float m_squareMaxspeed;
-    private float m_squareNeightborRadius;
-    private float m_squareAvoidanceRadius;
+    protected float m_squareMaxspeed;
+    protected float m_squareNeightborRadius;
+    protected float m_squareAvoidanceRadius;
 
     public float SquareAvoidanceRadius { get { return m_squareAvoidanceRadius; } }
 
@@ -41,6 +44,8 @@ public class Flock : MonoBehaviour
         m_squareMaxspeed = maxSpeed * maxSpeed;
         m_squareNeightborRadius = neighborRadius * neighborRadius;
         m_squareAvoidanceRadius = m_squareNeightborRadius * avoidanceRadiusMultiplier * avoidanceRadiusMultiplier;
+
+
 
         for(int i = 0; i < startingCount; i++)
         {
@@ -54,6 +59,15 @@ public class Flock : MonoBehaviour
             newAgent.name = "Agent " + i;
             newAgent.Init(this);
             agents.Add(newAgent);
+        }
+    }
+
+    protected void RemoveAgentFromFlock(FlockAgent agent)
+    {
+        if(agents.Contains(agent))
+        {
+            agents.Remove(agent);
+            agent.SetFlock(null);
         }
     }
 
@@ -73,7 +87,7 @@ public class Flock : MonoBehaviour
         }
     }
 
-    private List<Transform> GetNearbyObjects(FlockAgent agent)
+    protected List<Transform> GetNearbyObjects(FlockAgent agent)
     {
         List<Transform> context = new List<Transform>();
         Collider2D[] contextColliders = Physics2D.OverlapCircleAll(agent.transform.position, neighborRadius);

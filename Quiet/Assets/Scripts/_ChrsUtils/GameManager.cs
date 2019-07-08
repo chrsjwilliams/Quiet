@@ -1,12 +1,46 @@
 ﻿using UnityEngine.Assertions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using BeatManagement;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private KeyCode RESTART_GAME = KeyCode.Backspace;
 
     private const string RELOAD_GAME = "_Main";
+    [SerializeField] private bool timedRestart;
+
+    [SerializeField]
+    private Clock clock;
+    public double levelBPM;
+
+    private float inactivityTimer;
+    private const float inactivityBeforeReset = 180f;
+
+    private bool soundEffectsEnabled = true;
+    public bool SoundEffectsEnabled
+    {
+        get { return soundEffectsEnabled; }
+        set
+        {
+            soundEffectsEnabled = value;
+            UpdateSoundEffectPlayerPrefs();
+        }
+    }
+    private bool musicEnabled = true;
+
+    public bool MusicEnabled
+    {
+        get { return musicEnabled; }
+        set
+        {
+            musicEnabled = value;
+            UpdateMusicPlayerPrefs();
+        }
+    }
+
+    private readonly string SOUNDEFFECTSENABLED = "soundEffectsEnabledKey";
+    private readonly string MUSICENABLED = "musicEnabledKey";
 
     public const int LEFT_CLICK = 0;
     public const int RIGHT_CLICK = 1;
@@ -37,11 +71,47 @@ public class GameManager : MonoBehaviour
         get { return _mainCamera; }
     }
 
+    private void Awake()
+    {
+        Assert.raiseExceptions = true;
+        InitializeServices();
+        Services.GlobalEventManager.Register<Reset>(Reset);
+        Services.GlobalEventManager.Register<TouchDown>(ResetInactivity);
+        Services.GlobalEventManager.Register<MouseDown>(ResetInactivity);
+
+    }
+
     public void Init()
     {
         NumPlayers = 1;
         _mainCamera = Camera.main;
-        Services.EventManager.Register<KeyPressedEvent>(OnKeyPressed); 
+        Services.GameEventManager.Register<KeyPressedEvent>(OnKeyPressed);
+        Services.GlobalEventManager.Register<Reset>(Reset);
+        Services.GlobalEventManager.Register<TouchDown>(ResetInactivity);
+        Services.GlobalEventManager.Register<MouseDown>(ResetInactivity);
+        Input.simulateMouseWithTouches = false;
+    }
+
+    private void InitializeServices()
+    {
+        Services.GameEventManager = new GameEventsManager();
+        Services.GlobalEventManager = new GameEventsManager();
+        Services.GameManager = this;
+        Services.GameData = GetComponent<GameData>();
+        Init();
+
+        Services.Clips = Resources.Load<ClipLibrary>("Audio/ClipLibrary");
+        Services.AudioManager = new GameObject("Audio Manager").AddComponent<AudioManager>();
+
+        Services.GeneralTaskManager = new TaskManager();
+        Services.Prefabs = Resources.Load<PrefabDB>("Prefabs/PrefabDB");
+
+
+        Services.InputManager = new InputManager();
+        Services.Scenes = new GameSceneManager<TransitionData>(gameObject, Services.Prefabs.Scenes);
+        Services.CameraController = MainCamera.GetComponent<CameraController>();
+        Services.Clock = clock;
+        Services.Clock.Init(levelBPM);
     }
 
     private void OnKeyPressed(KeyPressedEvent e)
@@ -95,6 +165,49 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         Services.InputManager.Update();
+        Services.GeneralTaskManager.Update();
+        if (timedRestart)
+        {
+            InactivityCheck();
+        }
+    }
+
+    private void ResetInactivity(MouseDown e)
+    {
+        inactivityTimer = 0;
+    }
+
+    private void ResetInactivity(TouchDown e)
+    {
+        inactivityTimer = 0;
+    }
+
+    private void InactivityCheck()
+    {
+        inactivityTimer += Time.deltaTime;
+        if (inactivityTimer >= inactivityBeforeReset)
+        {
+            Services.AudioManager.FadeOutLevelMusic();
+            Reset(new Reset());
+        }
+    }
+    public void Reset(Reset e)
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+
+    private void UpdateSoundEffectPlayerPrefs()
+    {
+        PlayerPrefs.SetInt(SOUNDEFFECTSENABLED, SoundEffectsEnabled ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+
+    private void UpdateMusicPlayerPrefs()
+    {
+        PlayerPrefs.SetInt(MUSICENABLED, MusicEnabled ? 1 : 0);
+        PlayerPrefs.Save();
     }
 
     public static Color float_array_to_Color(float[] arr)
