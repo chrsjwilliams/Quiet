@@ -28,11 +28,20 @@ public class CameraFollow2D : MonoBehaviour
 	public float xNegBoundary = 0f;				//	The lowest the camera can go in the x direction
 	public float nextTimeToSearch = 0;				//	How long unitl the camera searches for the target again
 
+    public float zoomedInSize = 4;
+    public float zoomedOutSize = 9;
+
+    public float zoomSpeed = 0.5f;
+
 	//	Private Variabels
 	private float m_OffsetZ;						//	...
 	private Vector3 m_LastTargetPosition;			//	Where the camera's target was last frame
 	private Vector3 m_CurrentVelocity;				//	Velocity of the camera
-	private Vector3 m_LookAheadPos;					//	Where the camera is set to when it's looking ahead
+	private Vector3 m_LookAheadPos;                 //	Where the camera is set to when it's looking ahead
+
+
+    public Camera c;
+    public PlayerControlledFlockAgent player;
 
 	/*--------------------------------------------------------------------------------------*/
 	/*																						*/
@@ -41,6 +50,7 @@ public class CameraFollow2D : MonoBehaviour
 	/*--------------------------------------------------------------------------------------*/
 	void Start () 
 	{
+        c = GetComponent<Camera>();
 		target = null;
         moveCamera = true;
 	}
@@ -58,7 +68,7 @@ public class CameraFollow2D : MonoBehaviour
 			if (result != null)
 			{
 				target = result.transform;
-
+                player = target.GetComponent<PlayerControlledFlockAgent>();
 				m_LastTargetPosition = target.position;
 				m_OffsetZ = (transform.position - target.position).z;
 				transform.parent = null;
@@ -80,6 +90,18 @@ public class CameraFollow2D : MonoBehaviour
             {
                 FindPlayer();
                 return;
+            }
+            else
+            {
+                if(player.TouchInputActive)
+                {
+                    c.orthographicSize = Mathf.Lerp(c.orthographicSize, zoomedInSize, Time.deltaTime * zoomSpeed);
+                }
+                else
+                {
+                    c.orthographicSize = Mathf.Lerp(c.orthographicSize, zoomedOutSize, Time.deltaTime * zoomSpeed);
+
+                }
             }
 
             float xMoveDelta = (target.position - m_LastTargetPosition).x;

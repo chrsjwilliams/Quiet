@@ -7,7 +7,8 @@ public class PlayerControlledFlockAgent : FlockAgent
     private bool m_arrivedAtTarget;
 
     private int m_touchID;
-    private bool m_TouchInputActive;
+    private bool m_touchInputActive;
+    public bool TouchInputActive { get { return m_touchInputActive; } }
 
     private Vector3 m_targetPos;
     public Vector3 TargetPosition { get { return m_targetPos; } }
@@ -29,7 +30,7 @@ public class PlayerControlledFlockAgent : FlockAgent
 
     public override void Move(Vector2 velocity)
     {
-        if (m_touchID == -1 && !m_TouchInputActive)
+        if (m_touchID == -1 && !m_touchInputActive)
         {
             transform.up = velocity;
             transform.position += (Vector3)velocity * Time.deltaTime;
@@ -71,7 +72,7 @@ public class PlayerControlledFlockAgent : FlockAgent
 
         Services.GameEventManager.Register<TouchDown>(OnTouchDown);
         Services.GameEventManager.Register<MouseDown>(OnMouseDownEvent);
-        m_TouchInputActive = false;
+        m_touchInputActive = false;
         m_touchID = -1;
 
     }
@@ -117,7 +118,7 @@ public class PlayerControlledFlockAgent : FlockAgent
 
     public virtual void OnInputDown()
     {
-        m_TouchInputActive = true;
+        m_touchInputActive = true;
         Services.AudioManager.RegisterSoundEffect(Services.Clips.PiecePicked);
 
 
@@ -146,7 +147,7 @@ public class PlayerControlledFlockAgent : FlockAgent
 
     public virtual void OnInputUp(bool forceCancel = false)
     {
-        m_TouchInputActive = false;
+        m_touchInputActive = false;
 
 
         Services.GameEventManager.Unregister<TouchMove>(OnTouchMove);
