@@ -23,6 +23,7 @@ public class PlayerControlledFlockAgent : FlockAgent
     public override void Init(Flock flock)
     {
         m_agentFlock = flock;
+        gameObject.tag = "Player";
         Unlock();
     }
 
