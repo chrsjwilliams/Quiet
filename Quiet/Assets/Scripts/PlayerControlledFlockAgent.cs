@@ -25,6 +25,7 @@ public class PlayerControlledFlockAgent : FlockAgent
     {
         m_agentFlock = flock;
         gameObject.tag = "Player";
+        gameObject.layer = 9;
         Unlock();
     }
 

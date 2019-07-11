@@ -839,7 +839,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1613611373}
   - component: {fileID: 1613611374}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PlayerFlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -874,7 +874,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agentPrefab: {fileID: 2374803052284845253, guid: 6825090acf0a67f49be83ada9ce816b7,
     type: 3}
-  behavior: {fileID: 11400000, guid: 3620c285abd8a6644874d47fe3d79d54, type: 2}
+  behavior: {fileID: 11400000, guid: 8376ee4ebed2d4d48a8fd800d4aff04d, type: 2}
   startingCount: 1
   driveFactor: 10
   maxSpeed: 5

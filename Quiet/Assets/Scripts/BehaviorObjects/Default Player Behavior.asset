@@ -10,17 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6fbb194637f858642911ef2d64bc94db, type: 3}
-  m_Name: Default Flock Behavior
+  m_Name: Default Player Behavior
   m_EditorClassIdentifier: 
   behaviours:
   - {fileID: 11400000, guid: 868d59f5e850db649a96e2725a26e899, type: 2}
   - {fileID: 11400000, guid: 5e9a4aa5a82d2fe47a22ebcdea0e7695, type: 2}
   - {fileID: 11400000, guid: aee659bbed61a7f46b603d0bc9bd74b9, type: 2}
   - {fileID: 11400000, guid: 2f96d333b12efba46a5fdd926e0c5596, type: 2}
-  - {fileID: 11400000, guid: 4ad965c49672a2447a85f3b4e3ae1d9e, type: 2}
   weights:
   - 1
   - 2
   - 4
   - 0.1
-  - 10
