@@ -6,7 +6,10 @@ using UnityEngine;
 public class CompositeBehavior : FlockBehaviour
 {
     public FlockBehaviour[] behaviours;
+    private readonly float[] defaultWeights = { 1f, 2f, 4f, 0.1f, 10f };
     public float[] weights;
+
+    public enum Behavior { ALIGNMENT = 0, AVOIDANCE, STEERED, INBOUNDS, FLEE};
 
     public override Vector2 CalculateMove(FlockAgent agent, List<Transform> context, Flock flock)
     {
@@ -40,5 +43,18 @@ public class CompositeBehavior : FlockBehaviour
             }
         }
         return move;
+    }
+
+    public void AdjustBehaviorWeight(Behavior behavior, float newWeight)
+    {
+        weights[(int)behavior] = newWeight;
+    }
+
+    public void ResetWeightsToDefault()
+    {
+        for(int i = 0; i < weights.Length; i++)
+        {
+            weights[i] = defaultWeights[i];
+        }
     }
 }

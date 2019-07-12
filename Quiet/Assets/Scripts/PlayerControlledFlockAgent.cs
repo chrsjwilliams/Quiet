@@ -54,7 +54,10 @@ public class PlayerControlledFlockAgent : FlockAgent
 
     private void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            Flock flock = GameObject.Find("FlockBlue").GetComponent<Flock>();
+        }
     }
 
     #region Touch Input

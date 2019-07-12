@@ -8,9 +8,7 @@ public class Flock : MonoBehaviour
      *  TODO:
      *          Color change based on number of neighbors?
      *          Random Walk behabior
-     *          Flee Behavior
      *          Surround behavior
-     *          Zoom out when not interacting
      * 
      */ 
 
