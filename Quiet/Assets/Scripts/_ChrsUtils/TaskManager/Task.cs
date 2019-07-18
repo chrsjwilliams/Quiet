@@ -140,6 +140,14 @@ public class Task
 
     public List<Task> nextTasks { get; private set; }
 
+    public Task Then(Task task)
+    {
+        Debug.Assert(!task.IsAttached);
+        nextTasks = new List<Task>();
+        nextTasks.Add(task);
+        return task;
+    }
+
     public void Then(params Task[] tasks)
     {
         nextTasks = new List<Task>();

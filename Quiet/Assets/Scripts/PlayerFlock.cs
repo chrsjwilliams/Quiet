@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class PlayerFlock : Flock
 {
-    private PlayerControlledFlockAgent player;
+    private PlayerControlledFlockAgent m_player;
+    public PlayerControlledFlockAgent Player { get { return m_player; } }
 
-    private void Start()
+    public override void Init()
     {
         Flock flock = GetComponent<Flock>();
         FlockAgent newAgent = Instantiate(
@@ -15,21 +16,21 @@ public class PlayerFlock : Flock
                                 Quaternion.Euler(Vector3.forward * Random.Range(0f, 360f)),
                                 transform);
         newAgent.gameObject.AddComponent<PlayerControlledFlockAgent>();
-        player = newAgent.GetComponent<PlayerControlledFlockAgent>();
-        player.name = "Player";
+        m_player = newAgent.GetComponent<PlayerControlledFlockAgent>();
+        m_player.name = "Player";
         Destroy(newAgent.GetComponent<FlockAgent>());
-        player.Init(this);
+        m_player.Init(this);
     }
 
     private void Update()
     {
-        List<Transform> context = GetNearbyObjects(player);
-        Vector2 move = behavior.CalculateMove(player, context, this);
+        List<Transform> context = GetNearbyObjects(m_player);
+        Vector2 move = behavior.CalculateMove(m_player, context, this);
         move *= driveFactor;
         if (move.sqrMagnitude > m_squareMaxspeed)
         {
             move = move.normalized * maxSpeed;
         }
-        player.Move(move);
+        m_player.Move(move);
     }
 }

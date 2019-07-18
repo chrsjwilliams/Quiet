@@ -35,9 +35,13 @@ public class Flock : MonoBehaviour
 
     public float SquareAvoidanceRadius { get { return m_squareAvoidanceRadius; } }
 
+    void Awake()
+    {
+        Init();
+    }
 
     // Start is called before the first frame update
-    void Start()
+    public virtual void Init()
     {
         m_squareMaxspeed = maxSpeed * maxSpeed;
         m_squareNeightborRadius = neighborRadius * neighborRadius;

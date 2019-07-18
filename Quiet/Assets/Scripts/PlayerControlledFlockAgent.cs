@@ -7,8 +7,11 @@ public class PlayerControlledFlockAgent : FlockAgent
     private bool m_arrivedAtTarget;
 
     private int m_touchID;
-    private bool m_touchInputActive;
+    private bool m_touchInputActive = false;
     public bool TouchInputActive { get { return m_touchInputActive; } }
+
+    private bool m_stopMoving = true;
+    public bool StopMoving {  get { return m_stopMoving;  } }
 
     private Vector3 m_targetPos;
     public Vector3 TargetPosition { get { return m_targetPos; } }
@@ -16,9 +19,13 @@ public class PlayerControlledFlockAgent : FlockAgent
     private Vector3 m_initalTouchPos;
     public Vector3 InitalTouchPos { get { return m_initalTouchPos; } }
 
+    private TaskManager m_taskManager = new TaskManager();
+
     private void Start()
     {
         m_agentCollider = GetComponent<Collider2D>();
+        m_rigidBody2D = GetComponent<Rigidbody2D>();
+        PauseMovement();
     }
 
     public override void Init(Flock flock)
@@ -26,15 +33,30 @@ public class PlayerControlledFlockAgent : FlockAgent
         m_agentFlock = flock;
         gameObject.tag = "Player";
         gameObject.layer = 9;
-        Unlock();
+        Task resumeMovement = new ActionTask(ResumeMovement);
+        List<Task> resume = new List<Task>();
+        resume.Add(new Wait(2));
+        resume.Add(resumeMovement);
+        resume.Add(new ActionTask(Unlock));
+        TaskQueue initTaskList = new TaskQueue(resume);
+
+        m_taskManager.Do(initTaskList);
     }
 
     public override void Move(Vector2 velocity)
     {
+        if (m_stopMoving)
+        {
+            Debug.Log("Stop moving");
+            return;
+        }
+
         if (m_touchID == -1 && !m_touchInputActive)
         {
+            // TODO: use physics to move player...
             transform.up = velocity;
-            transform.position += (Vector3)velocity * Time.deltaTime;
+            //transform.position += (Vector3)velocity * Time.deltaTime;
+            m_rigidBody2D.velocity = velocity * Time.deltaTime;
         }
         else
         {   
@@ -54,11 +76,15 @@ public class PlayerControlledFlockAgent : FlockAgent
 
     private void Update()
     {
+        m_taskManager.Update();
         if (Input.GetKeyDown(KeyCode.V))
         {
             Flock flock = GameObject.Find("FlockBlue").GetComponent<Flock>();
         }
     }
+
+    private void ResumeMovement() { m_stopMoving = false; }
+    private void PauseMovement() { m_stopMoving = true; }
 
     #region Touch Input
     public void Lock()

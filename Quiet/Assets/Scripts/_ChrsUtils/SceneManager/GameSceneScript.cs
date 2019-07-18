@@ -15,6 +15,13 @@ public class GameSceneScript : Scene<TransitionData>
 
     TaskManager _tm = new TaskManager();
 
+    private bool m_introZoom = true;
+    public bool IntroZoom {  get { return m_introZoom; } }
+
+    [SerializeField]
+    private PlayerFlock m_playerFlock;
+    public PlayerFlock PlayerFlock { get { return m_playerFlock; } }
+
     private void Start()
     {
         
@@ -22,6 +29,12 @@ public class GameSceneScript : Scene<TransitionData>
 
     internal override void OnEnter(TransitionData data)
     {
+
+    }
+
+    public void StopIntroZoom()
+    {
+        m_introZoom = false;
     }
 
     public void EnterScene()
