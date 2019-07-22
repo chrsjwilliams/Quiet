@@ -38,25 +38,31 @@ public class PlayerControlledFlockAgent : FlockAgent
         resume.Add(new Wait(2));
         resume.Add(resumeMovement);
         resume.Add(new ActionTask(Unlock));
+        resume.Add(new ActionTask(RegisterForFlockEvents));
         TaskQueue initTaskList = new TaskQueue(resume);
 
         m_taskManager.Do(initTaskList);
     }
 
+    public void RegisterForFlockEvents()
+    {
+        Services.GameEventManager.Register<PlayerLeftContextEvent>(OnLeavingFlockAgentContext);
+    }
+
+    public void OnLeavingFlockAgentContext(PlayerLeftContextEvent e)
+    {
+        Debug.Log("Left context of " + e.agent);
+    }
+
     public override void Move(Vector2 velocity)
     {
-        if (m_stopMoving)
-        {
-            Debug.Log("Stop moving");
-            return;
-        }
+        if (m_stopMoving) return;
 
         if (m_touchID == -1 && !m_touchInputActive)
         {
-            // TODO: use physics to move player...
+            // TODO: use physics to move player?
             transform.up = velocity;
-            //transform.position += (Vector3)velocity * Time.deltaTime;
-            m_rigidBody2D.velocity = velocity * Time.deltaTime;
+            transform.position += (Vector3)velocity * Time.deltaTime;
         }
         else
         {   
@@ -71,7 +77,6 @@ public class PlayerControlledFlockAgent : FlockAgent
             float zRotation = Mathf.Atan2(direction.y, -direction.x) * Mathf.Rad2Deg;
             transform.localRotation = Quaternion.Euler(0, 0, 270 - zRotation);
         }
-       
     }
 
     private void Update()

@@ -15,17 +15,28 @@ public class FleeBehavior : AvoidanceBehavior
         // Average all points
         Vector2 avoidancenMove = Vector2.zero;
         int nAvoid = 0;
+        bool contains = false;
+        if (ContextContains(((GameSceneScript)Services.Scenes.CurrentScene).PlayerFlock.Player.transform, context))
+        {
+            contains = true;
+        }
+        else
+        {
+            agent.moreAnxious = false;
+            agent.SetAnxietyLevel(Mathf.Lerp(agent.AnxietyLevel, FlockAgent.MIN_ANXIETY_LEVEL, Easing.BackEaseOut(Time.deltaTime)));
+        }
+
+        if(agent.ContextContainsPlayer && agent.ContextContainsPlayer != contains && agent.Status == FlockAgent.AgentStatus.ANXIOUS)
+        {
+            
+            Services.GameEventManager.Fire(new PlayerLeftContextEvent(agent));
+        }
+        agent.SetContextContainsPlayer(contains);
         List<Transform> filterContext = (filter == null) ? context : filter.Filter(agent, context);
 
         float avoidanceRadius = flock ? flock.SquareAvoidanceRadius : m_defaultSquareAvoidanceRadius;
         avoidanceRadius *= agent.AnxietyLevel;
 
-        if(!ContextContains(((GameSceneScript)Services.Scenes.CurrentScene).PlayerFlock.Player.transform, context))
-        {
-            agent.moreAnxious = false;
-            agent.SetAnxietyLevel(Mathf.Lerp(agent.AnxietyLevel, FlockAgent.MIN_ANXIETY_LEVEL, Easing.BackEaseOut(Time.deltaTime)));
-
-        }
 
         foreach (Transform item in filterContext)
         {
@@ -35,9 +46,9 @@ public class FleeBehavior : AvoidanceBehavior
                 avoidanceRadius && mask == (mask | (1 << item.gameObject.layer)))
             {
                 agent.SetAnxietyLevel(Mathf.Lerp(agent.AnxietyLevel, FlockAgent.MAX_ANXIETY_LEVEL, Easing.BackEaseOut(Time.deltaTime)));
-                //Add to items to avoid and calculate the direction to move to avoid
-                //agent.LERPColor(true);
                 agent.moreAnxious = true;
+
+                //Add to items to avoid and calculate the direction to move to avoid
                 nAvoid++;
                 avoidancenMove += (Vector2)(agent.transform.position - item.position);
             }

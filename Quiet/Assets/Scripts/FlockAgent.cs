@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class FlockAgent : MonoBehaviour
 {
-
+    public enum AgentStatus { NORMAL = 0, ANXIOUS }
     protected Flock m_agentFlock;
     public Flock AgentFlock { get { return m_agentFlock; } }
 
@@ -17,7 +17,10 @@ public class FlockAgent : MonoBehaviour
 
     protected SpriteRenderer spriteRenderer;
     protected Color anxiousColor = new Color(1.0f, 103f/255f, 0f);
-    protected Color naturalColor = new Color(0f, 78f/255f, 152f/255f); 
+    protected Color naturalColor = new Color(0f, 78f/255f, 152f/255f);
+
+    private AgentStatus m_status = AgentStatus.NORMAL;
+    public AgentStatus Status { get { return m_status; } }
 
     [SerializeField]
     private float m_anxietyLevel;
@@ -29,12 +32,21 @@ public class FlockAgent : MonoBehaviour
 
     public bool moreAnxious = false;
 
+    private bool m_contextContainsPlayer = false;
+    public bool ContextContainsPlayer {  get { return m_contextContainsPlayer; } }
+    
+
     // Start is called before the first frame update
     void Start()
     {
         m_agentCollider = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         m_rigidBody2D = GetComponent<Rigidbody2D>();
+    }
+
+    public void SetContextContainsPlayer(bool containsPlayer)
+    {
+        m_contextContainsPlayer = containsPlayer;
     }
 
     public void SetFlock(Flock newFlock)
@@ -57,18 +69,27 @@ public class FlockAgent : MonoBehaviour
     public void SetAnxietyLevel(float level)
     {
         m_anxietyLevel = level;
+        if(m_anxietyLevel > MAX_ANXIETY_LEVEL * 0.75f)
+        {
+            m_status = AgentStatus.ANXIOUS;
+        }
+        else
+        {
+            m_status = AgentStatus.NORMAL;
+        }
     }
 
     private void Update()
     {
         if (moreAnxious)
         {
-            spriteRenderer.color = Color.Lerp(spriteRenderer.color, anxiousColor, Time.deltaTime);// Easing.ElasticEaseIn(Time.deltaTime));
+            spriteRenderer.color = Color.Lerp(spriteRenderer.color, anxiousColor, Time.deltaTime);
         }
         else
         {
-            spriteRenderer.color = Color.Lerp(spriteRenderer.color, naturalColor, Time.deltaTime);// Easing.BackEaseIn(Time.deltaTime));
+            spriteRenderer.color = Color.Lerp(spriteRenderer.color, naturalColor, Time.deltaTime);
         }
+
     }
 
     public void LERPColor(bool moreAnxious)

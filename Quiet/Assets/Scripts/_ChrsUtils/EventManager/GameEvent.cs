@@ -166,3 +166,12 @@ public class KeyPressedEvent : GameEvent
 }
 
 public class Reset : GameEvent { }
+
+public class PlayerLeftContextEvent : GameEvent
+{
+    public readonly FlockAgent agent;
+    public PlayerLeftContextEvent(FlockAgent _agent)
+    {
+        agent = _agent;
+    }
+}
